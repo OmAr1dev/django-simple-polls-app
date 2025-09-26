@@ -4,6 +4,8 @@
 
 {% block content %}
 <h1>{{ poll.title }}</h1>
+<p><strong>Created by:</strong> {{ poll.creator.username }}</p>
+<p><strong>Status:</strong> {% if poll.is_closed %}Closed{% else %}Active{% endif %}</p>
 
 {% if user == poll.creator %}
     <form method="post" style="display:inline;">
