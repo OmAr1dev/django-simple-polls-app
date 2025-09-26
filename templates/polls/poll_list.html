@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Polls</title>
-</head>
-<body>
-    <h1>All Polls</h1>
-    <ul>
-        {% for poll in polls %}
-            <li><a href="{% url 'poll_detail' poll.id %}">{{ poll.title }}</a></li>
-        {% empty %}
-            <li>No polls available.</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}All Polls{% endblock %}
+
+{% block content %}
+<h1>All Polls</h1>
+<ul>
+    {% for poll in polls %}
+        <li><a href="{% url 'poll_detail' poll.id %}">{{ poll.title }}</a></li>
+    {% empty %}
+        <li>No polls available.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
