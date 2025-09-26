@@ -8,16 +8,20 @@ from .models import Choice, Poll, Vote
 
 
 def poll_list(request):
-    """Display all polls"""
+    """Display all polls with status (active/closed).
+    If a poll is closed, show the winning choice."""
     polls = Poll.objects.all()
     return render(request, "polls/poll_list.html", {"polls": polls})
 
 
 @login_required
 def poll_detail(request, poll_id):
-    """Display a single poll and handle voting"""
+    """Display a single poll and handle voting
+    Voting is disabled if the poll is closed."""
     poll = get_object_or_404(Poll, id=poll_id)
     voted = Vote.objects.filter(poll=poll, user=request.user).exists()
+    if poll.is_closed:
+        voted = True  # disable voting for closed polls
 
     if request.method == "POST" and not voted:
         choice_id = request.POST.get("choice")

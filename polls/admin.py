@@ -14,7 +14,8 @@ class PollAdmin(admin.ModelAdmin):
     """Custom admin configuration for the Poll model."""
 
     inlines = [ChoiceInline]
-    list_display = ("title", "created_at")
+    list_display = ("title", "creator", "created_at", "is_closed")
+    list_filter = ("is_closed", "created_at", "creator")
 
 
 admin.site.register(Poll, PollAdmin)

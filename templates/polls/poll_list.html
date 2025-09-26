@@ -6,7 +6,14 @@
 <h1>All Polls</h1>
 <ul>
     {% for poll in polls %}
-        <li><a href="{% url 'poll_detail' poll.id %}">{{ poll.title }}</a></li>
+        <li>
+            <a href="{% url 'poll_detail' poll.id %}">{{ poll.title }}</a>
+            {% if poll.is_closed %}
+                - <strong>Closed</strong> | Winner: {{ poll.get_winner.text }}
+            {% else %}
+                - <strong>Active</strong>
+            {% endif %}
+        </li>
     {% empty %}
         <li>No polls available.</li>
     {% endfor %}

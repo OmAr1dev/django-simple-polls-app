@@ -7,10 +7,21 @@ class Poll(models.Model):
 
     title = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
+    creator = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="created_polls"
+    )
+    is_closed = models.BooleanField(default=False)
 
     def __str__(self):
         """Return the title of the poll as its string representation."""
         return self.title
+
+    def get_winner(self):
+        """
+        Returns the Choice object with the highest votes.
+        Returns None if there are no choices.
+        """
+        return self.choices.order_by("-votes").first()
 
 
 class Choice(models.Model):
