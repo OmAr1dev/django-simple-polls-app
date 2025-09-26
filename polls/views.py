@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import RegisterForm
+from .forms import PollCreateForm, RegisterForm
 from .models import Choice, Poll, Vote
 
 
@@ -15,11 +15,47 @@ def poll_list(request):
 
 
 @login_required
+def create_poll(request):
+    """
+    Single-page poll creation form:
+    - enter title
+    - select number of choices
+    - dynamically show that many choice fields
+    """
+    if request.method == "POST":
+        form = PollCreateForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            num_choices = form.cleaned_data["num_choices"]
+            poll = Poll.objects.create(title=title, creator=request.user)
+            # Save non-empty choices from POST
+            for i in range(1, num_choices + 1):
+                choice_text = request.POST.get(f"choice_{i}")
+                if choice_text:
+                    Choice.objects.create(poll=poll, text=choice_text)
+            messages.success(request, "Poll created successfully!")
+            return redirect("poll_list")
+    else:
+        form = PollCreateForm()
+
+    return render(request, "polls/create_poll.html", {"form": form})
+
+
+@login_required
 def poll_detail(request, poll_id):
-    """Display a single poll and handle voting
-    Voting is disabled if the poll is closed."""
+    """Display a single poll, handle voting, and allow creator to close the poll."""
     poll = get_object_or_404(Poll, id=poll_id)
     voted = Vote.objects.filter(poll=poll, user=request.user).exists()
+    # Handle closing poll
+    if (
+        request.method == "POST"
+        and "close_poll" in request.POST
+        and request.user == poll.creator
+    ):
+        poll.is_closed = True
+        poll.save()
+        messages.success(request, "Poll closed successfully!")
+        return redirect("poll_detail", poll_id=poll.id)
     if poll.is_closed:
         voted = True  # disable voting for closed polls
 

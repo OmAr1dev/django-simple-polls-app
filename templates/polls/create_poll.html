@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Poll{% endblock %}
+
+{% block content %}
+<h1>Create a New Poll</h1>
+<form method="post" id="poll-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div id="choices-container">
+        <!-- Choice inputs will be generated here -->
+    </div>
+
+    <button type="submit">Create Poll</button>
+</form>
+
+<script>
+// Function to create choice inputs
+function createChoiceInputs(num) {
+    const container = document.getElementById('choices-container');
+    container.innerHTML = ''; // clear previous inputs
+    for (let i = 1; i <= num; i++) {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.name = `choice_${i}`;
+        input.placeholder = `Choice ${i}`;
+        input.required = true;
+        input.style.display = 'block';
+        input.style.marginBottom = '5px';
+        container.appendChild(input);
+    }
+}
+
+// On page load
+const numChoicesInput = document.querySelector('input[name="num_choices"]');
+createChoiceInputs(numChoicesInput.value);
+
+// Update choice inputs when number changes
+numChoicesInput.addEventListener('change', () => {
+    let num = parseInt(numChoicesInput.value);
+    if (num < 2) num = 2;
+    if (num > 10) num = 10;
+    createChoiceInputs(num);
+});
+</script>
+{% endblock %}
