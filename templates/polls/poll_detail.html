@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ poll.title }}</title>
+</head>
+<body>
+    <h1>{{ poll.title }}</h1>
+
+    {% if voted %}
+        <p>You already voted!</p>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            {% for choice in poll.choices.all %}
+                <input type="radio" name="choice" value="{{ choice.id }}" required>
+                {{ choice.text }}<br>
+            {% endfor %}
+            <button type="submit">Vote</button>
+        </form>
+    {% endif %}
+
+    <h2>Results:</h2>
+    <ul>
+        {% for choice in poll.choices.all %}
+            <li>{{ choice.text }}: {{ choice.votes }} votes</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
