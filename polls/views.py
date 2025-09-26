@@ -56,6 +56,11 @@ def poll_detail(request, poll_id):
         poll.save()
         messages.success(request, "Poll closed successfully!")
         return redirect("poll_detail", poll_id=poll.id)
+    # Handle deleting poll
+    elif "delete_poll" in request.POST and request.user == poll.creator:
+        poll.delete()
+        messages.success(request, "Poll deleted successfully!")
+        return redirect("poll_list")
     if poll.is_closed:
         voted = True  # disable voting for closed polls
 

@@ -5,10 +5,13 @@
 {% block content %}
 <h1>{{ poll.title }}</h1>
 
-{% if user == poll.creator and not poll.is_closed %}
-    <form method="post">
+{% if user == poll.creator %}
+    <form method="post" style="display:inline;">
         {% csrf_token %}
-        <button type="submit" name="close_poll">Close Poll</button>
+        {% if not poll.is_closed %}
+            <button type="submit" name="close_poll">Close Poll</button>
+        {% endif %}
+        <button type="submit" name="delete_poll" onclick="return confirm('Are you sure you want to delete this poll?');">Delete Poll</button>
     </form>
 {% endif %}
 
