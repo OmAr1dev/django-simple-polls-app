@@ -1,47 +1,70 @@
 {% extends 'base.html' %}
-
 {% block title %}Create Poll{% endblock %}
 
 {% block content %}
-<h1>Create a New Poll</h1>
-<form method="post" id="poll-form">
-    {% csrf_token %}
-    {{ form.as_p }}
+<div class="max-w-lg mx-auto mt-12 bg-white p-8 rounded-2xl shadow-xl animate-fade-in">
+  <h1 class="text-3xl font-bold mb-6 text-center text-indigo-600">Create a New Poll</h1>
 
-    <div id="choices-container">
-        <!-- Choice inputs will be generated here -->
+  <form method="post" id="poll-form" class="space-y-5">
+    {% csrf_token %}
+
+    <!-- Title Input -->
+    <div class="flex flex-col">
+      <label class="text-gray-700 font-semibold mb-1">Poll Title</label>
+      <input type="text" name="title" required
+             class="p-3 border-2 border-gray-400 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition w-full"
+             placeholder="Enter poll title">
     </div>
 
-    <button type="submit">Create Poll</button>
-</form>
+    <!-- Number of Choices -->
+    <div class="flex flex-col">
+      <label class="text-gray-700 font-semibold mb-1">Number of Choices</label>
+      <input type="number" name="num_choices" value="2" min="2" max="10" required
+             class="p-3 border-2 border-gray-400 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition w-full">
+    </div>
+
+    <!-- Choices Container -->
+    <div id="choices-container" class="space-y-3"></div>
+
+    <button type="submit" class="w-full bg-indigo-500 text-white py-3 rounded-xl hover:bg-indigo-600 transition font-semibold shadow-lg">
+      Create Poll
+    </button>
+  </form>
+</div>
 
 <script>
-// Function to create choice inputs
 function createChoiceInputs(num) {
-    const container = document.getElementById('choices-container');
-    container.innerHTML = ''; // clear previous inputs
-    for (let i = 1; i <= num; i++) {
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.name = `choice_${i}`;
-        input.placeholder = `Choice ${i}`;
-        input.required = true;
-        input.style.display = 'block';
-        input.style.marginBottom = '5px';
-        container.appendChild(input);
-    }
+  const container = document.getElementById('choices-container');
+  container.innerHTML = '';
+  for (let i = 1; i <= num; i++) {
+    const wrapper = document.createElement('div');
+    wrapper.className = "flex flex-col";
+
+    const label = document.createElement('label');
+    label.textContent = `Choice ${i}`;
+    label.className = "text-gray-700 font-semibold mb-1";
+
+    const input = document.createElement('input');
+    input.type = "text";
+    input.name = `choice_${i}`;
+    input.required = true;
+    input.placeholder = `Choice ${i}`;
+    input.className = "p-3 border-2 border-gray-400 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition w-full";
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(input);
+    container.appendChild(wrapper);
+  }
 }
 
-// On page load
 const numChoicesInput = document.querySelector('input[name="num_choices"]');
 createChoiceInputs(numChoicesInput.value);
 
-// Update choice inputs when number changes
 numChoicesInput.addEventListener('change', () => {
-    let num = parseInt(numChoicesInput.value);
-    if (num < 2) num = 2;
-    if (num > 10) num = 10;
-    createChoiceInputs(num);
+  let num = parseInt(numChoicesInput.value);
+  if (num < 2) num = 2;
+  if (num > 10) num = 10;
+  createChoiceInputs(num);
 });
 </script>
 {% endblock %}

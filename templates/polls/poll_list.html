@@ -1,33 +1,32 @@
 {% extends 'base.html' %}
-
 {% block title %}All Polls{% endblock %}
 
 {% block content %}
-<h1>All Polls</h1>
-<ul>
+<h1 class="text-4xl font-bold mb-8 text-center text-indigo-600">All Polls</h1>
+<div class="grid gap-6 md:grid-cols-2">
     {% for poll in polls %}
-        <li>
-            <a href="{% url 'poll_detail' poll.id %}">{{ poll.title }}</a>
+        <a href="{% url 'poll_detail' poll.id %}" class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition flex flex-col justify-between">
+            <h2 class="text-xl font-bold mb-2">{{ poll.title }}</h2>
+            <p class="text-gray-500 mb-2">
+                Status: <span class="{% if poll.is_closed %}text-red-500{% else %}text-green-500{% endif %} font-semibold">
+                {% if poll.is_closed %}Closed{% else %}Active{% endif %}</span>
+            </p>
             {% if poll.is_closed %}
-                - <strong>Closed</strong> |
-                {% with winner=poll.get_winner %}
-                    {% if winner == None %}
-                        No one voted
-                    {% elif winner|length > 1 %}
-                        Draw between:
-                        {% for choice in winner %}
-                            {{ choice.text }}{% if not forloop.last %}, {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        Winner: {{ winner.0.text }}
-                    {% endif %}
-                {% endwith %}
-            {% else %}
-                - <strong>Active</strong>
+                <p class="text-gray-700">
+                    {% with winner=poll.get_winner %}
+                        {% if winner == None %}
+                            No one voted
+                        {% elif winner|length > 1 %}
+                            Draw between {% for choice in winner %}{{ choice.text }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {% else %}
+                            Winner: {{ winner.0.text }}
+                        {% endif %}
+                    {% endwith %}
+                </p>
             {% endif %}
-        </li>
+        </a>
     {% empty %}
-        <li>No polls available.</li>
+        <p class="text-gray-500 text-center">No polls available.</p>
     {% endfor %}
-</ul>
+</div>
 {% endblock %}

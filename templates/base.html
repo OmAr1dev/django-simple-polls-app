@@ -1,26 +1,51 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>{% block title %}Simple Polls App{% endblock %}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Simple Polls App{% endblock %}</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<body>
-    <!-- Navigation -->
-    <nav>
-        <a href="{% url 'poll_list' %}">Home</a>
-        <a href="{% url 'create_poll' %}">Create Poll</a>
-        {% if user.is_authenticated %}
-            <span>Welcome, {{ user.username }}!</span>
-            <a href="{% url 'logout' %}">Logout</a>
-        {% else %}
-            <a href="{% url 'login' %}">Login</a>
-            <a href="{% url 'register' %}">Register</a>
-        {% endif %}
-    </nav>
+<body class="bg-gradient-to-r from-indigo-50 to-blue-50 font-sans min-h-screen flex flex-col">
 
-    <hr>
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-50 rounded-b-xl">
+    <div class="flex items-center space-x-6 font-semibold text-gray-700">
+      <a href="{% url 'poll_list' %}" class="hover:text-indigo-500 transition flex items-center space-x-1">
+        <span class="material-icons">home</span><span>Home</span>
+      </a>
+      <a href="{% url 'create_poll' %}" class="hover:text-indigo-500 transition flex items-center space-x-1">
+        <span class="material-icons">add_circle</span><span>Create Poll</span>
+      </a>
+    </div>
 
-    <!-- Main content -->
-    {% block content %}
-    {% endblock %}
+    <div class="flex space-x-4 items-center">
+      {% if user.is_authenticated %}
+        <span class="text-gray-700">Hi, <span class="font-semibold">{{ user.username }}</span></span>
+        <a href="{% url 'logout' %}" class="text-red-500 hover:underline transition flex items-center space-x-1">
+          <span class="material-icons">logout</span> Logout
+        </a>
+      {% else %}
+        <a href="{% url 'login' %}" class="text-green-500 hover:underline transition flex items-center space-x-1">
+          <span class="material-icons">login</span> Login
+        </a>
+        <a href="{% url 'register' %}" class="text-blue-500 hover:underline transition flex items-center space-x-1">
+          <span class="material-icons">person_add</span> Register
+        </a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <main class="flex-1 max-w-5xl mx-auto px-4 mt-6">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="bg-white shadow-inner p-4 mt-8 text-center text-gray-500 rounded-t-xl">
+    &copy; 2025 Simple Polls App
+  </footer>
 </body>
 </html>
