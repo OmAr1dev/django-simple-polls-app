@@ -78,6 +78,7 @@ python manage.py runserver
 ![Login Page ](screenshots/login_page.png)
 ![Create Poll Page](screenshots/create_poll_page.png)
 ![Poll List Page](screenshots/poll_list_page.png)
+![Poll Detail Page](screenshots/poll_detail_page.png)
 
 ---
 
