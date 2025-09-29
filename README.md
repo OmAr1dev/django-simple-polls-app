@@ -74,11 +74,10 @@ python manage.py runserver
 
 ## Screenshots
 
-*Add your screenshots here to showcase login, create poll, and poll list pages.*
-![Register Pgae](image-1.png)
-![Login Page ](image.png)
-![Create Poll Page](image-2.png)
-![Poll List Page](image-4.png)
+![Register Pgae](screenshots/register_page.png)
+![Login Page ](screenshots/login_page.png)
+![Create Poll Page](screenshots/create_poll_page.png)
+![Poll List Page](screenshots/poll_list_page.png)
 
 ---
 
