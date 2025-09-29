@@ -17,7 +17,14 @@
     </form>
 {% endif %}
 
-{% if voted %}
+<!-- Voting section -->
+{% if poll.is_closed %}
+    {% if voted %}
+        <p>This poll is closed, but you already voted on it.</p>
+    {% else %}
+        <p>This poll is closed. No more votes allowed.</p>
+    {% endif %}
+{% elif voted %}
     <p>You already voted!</p>
 {% else %}
     <form method="post">
@@ -30,6 +37,7 @@
     </form>
 {% endif %}
 
+<!-- Results section -->
 <h2>Results:</h2>
 <ul>
     {% for choice in poll.choices.all %}

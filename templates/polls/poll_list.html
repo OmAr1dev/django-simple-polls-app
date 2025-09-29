@@ -9,7 +9,19 @@
         <li>
             <a href="{% url 'poll_detail' poll.id %}">{{ poll.title }}</a>
             {% if poll.is_closed %}
-                - <strong>Closed</strong> | Winner: {{ poll.get_winner.text }}
+                - <strong>Closed</strong> |
+                {% with winner=poll.get_winner %}
+                    {% if winner == None %}
+                        No one voted
+                    {% elif winner|length > 1 %}
+                        Draw between:
+                        {% for choice in winner %}
+                            {{ choice.text }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        Winner: {{ winner.0.text }}
+                    {% endif %}
+                {% endwith %}
             {% else %}
                 - <strong>Active</strong>
             {% endif %}

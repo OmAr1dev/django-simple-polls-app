@@ -43,37 +43,43 @@ def create_poll(request):
 
 @login_required
 def poll_detail(request, poll_id):
-    """Display a single poll, handle voting, and allow creator to close the poll."""
+    """
+    Display a single poll, handle voting, allow creator to close or delete the poll.
+    """
     poll = get_object_or_404(Poll, id=poll_id)
     voted = Vote.objects.filter(poll=poll, user=request.user).exists()
-    # Handle closing poll
-    if (
-        request.method == "POST"
-        and "close_poll" in request.POST
-        and request.user == poll.creator
-    ):
-        poll.is_closed = True
-        poll.save()
-        messages.success(request, "Poll closed successfully!")
-        return redirect("poll_detail", poll_id=poll.id)
-    # Handle deleting poll
-    elif "delete_poll" in request.POST and request.user == poll.creator:
-        poll.delete()
-        messages.success(request, "Poll deleted successfully!")
-        return redirect("poll_list")
-    if poll.is_closed:
-        voted = True  # disable voting for closed polls
 
-    if request.method == "POST" and not voted:
-        choice_id = request.POST.get("choice")
-        choice = poll.choices.get(id=choice_id)
-        choice.votes += 1
-        choice.save()
-        Vote.objects.create(poll=poll, user=request.user, choice=choice)
-        messages.success(request, "Your vote has been recorded!")
-        return redirect("poll_detail", poll_id=poll.id)
+    # Handle actions
+    if request.method == "POST":
+        if "close_poll" in request.POST and request.user == poll.creator:
+            poll.is_closed = True
+            poll.save()
+            messages.success(request, "Poll closed successfully!")
+            return redirect("poll_detail", poll_id=poll.id)
 
-    return render(request, "polls/poll_detail.html", {"poll": poll, "voted": voted})
+        elif "delete_poll" in request.POST and request.user == poll.creator:
+            poll.delete()
+            messages.success(request, "Poll deleted successfully!")
+            return redirect("poll_list")
+
+        elif "vote" in request.POST and not voted and not poll.is_closed:
+            choice_id = request.POST.get("choice")
+            choice = poll.choices.get(id=choice_id)
+            choice.votes += 1
+            choice.save()
+            Vote.objects.create(poll=poll, user=request.user, choice=choice)
+            messages.success(request, "Your vote has been recorded!")
+            return redirect("poll_detail", poll_id=poll.id)
+
+    # Pass both "voted" and "poll.is_closed" to template
+    return render(
+        request,
+        "polls/poll_detail.html",
+        {
+            "poll": poll,
+            "voted": voted,
+        },
+    )
 
 
 def register_view(request):

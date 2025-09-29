@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Max, Sum
 
 
 class Poll(models.Model):
@@ -16,12 +17,23 @@ class Poll(models.Model):
         """Return the title of the poll as its string representation."""
         return self.title
 
+    def total_votes(self):
+        """Return total votes across all choices."""
+        return self.choices.aggregate(total=Sum("votes"))["total"] or 0
+
     def get_winner(self):
         """
-        Returns the Choice object with the highest votes.
-        Returns None if there are no choices.
+        Returns:
+            - None if no votes at all
+            - A list of winning choices if there’s a tie
+            - A list with one choice if there’s a single winner
         """
-        return self.choices.order_by("-votes").first()
+        if self.total_votes() == 0:
+            return None
+
+        max_votes = self.choices.aggregate(max_votes=Max("votes"))["max_votes"]
+        winners = list(self.choices.filter(votes=max_votes))
+        return winners
 
 
 class Choice(models.Model):
